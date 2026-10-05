@@ -9,14 +9,14 @@ A free, simple, mobile-first web app that helps two people decide which apartmen
 
 ## Users and access
 
-- Two people, each with their own login (Supabase email magic link). Sessions persist per device.
+- Two people, each with their own login (Supabase email + password). Accounts are created by hand in the Supabase dashboard and public sign-up is disabled. Sessions persist per device. (Magic links were dropped: Supabase's free email service only delivers to project team members, and links open in in-app browsers.)
 - Data syncs across all devices (phone and computer).
 - Only two allowlisted email addresses can read or write data. This is enforced server-side with Supabase Row Level Security. Anyone else sees only the sign-in screen.
 - UI language: English (notes may be typed in any language). Currency: EUR (€).
 
 ## Screens
 
-1. **Sign in.** The user enters an email and receives a magic link.
+1. **Sign in.** Email + password.
 2. **Ranking (home).** Apartment cards sorted by combined score, highest first. Each card shows:
    - combined score (0–100), my total, and partner's total
    - rent €, m², rooms
@@ -27,9 +27,9 @@ A free, simple, mobile-first web app that helps two people decide which apartmen
    - Facts: name, address, rent €, size m², rooms, floor, listing URL, visit date.
    - Videos: a list of Google Drive / YouTube links rendered as embedded players. Unrecognised links fall back to a plain "Open link".
    - Notes, pros, cons (free text).
-   - My scores: a 1–10 slider per category, with partner's score shown beside it. Scores save on change.
+   - My scores: a row of 1–10 tap buttons per category (tapping the selected number again clears it), with partner's score shown beside it. Scores save immediately.
    - Edit and delete apartment (delete asks for confirmation).
-5. **Categories & weights.** Add, rename, reorder and delete categories, and set a weight from 0 to 5. Deleting a category asks for confirmation and removes its scores. Default categories are seeded on first run: Location, View, Size & layout, Balcony / outdoor, Price, Natural light, Kitchen, Quiet, Condition, Building & area (all weight 3).
+5. **Categories & weights.** Add, rename, reorder and delete categories, and set a weight from 0 to 5. Deleting a category asks for confirmation and removes its scores. Default categories are seeded by the schema SQL: Location, View, Size & layout, Balcony / outdoor, Price, Natural light, Kitchen, Quiet, Condition, Building & area (all weight 3).
 
 ## Scoring
 
@@ -63,8 +63,7 @@ A free, simple, mobile-first web app that helps two people decide which apartmen
 
 - An `allowed_emails` table (`email` pk, `display_name` text) supplies the names shown in the UI (e.g. "Yuval" vs partner). It, plus RLS policies on all tables permit access only when `auth.jwt() ->> 'email'` is in the allowlist.
 - Users may write only their own `scores` rows. Both users may read and write everything else.
-- Supabase Auth redirect URLs must include the GitHub Pages URL and `http://localhost:5173`.
-- The schema ships as a SQL file in the repo (`supabase/schema.sql`) and is run once in the Supabase SQL editor.
+- The schema ships as a SQL file in the repo (`supabase/schema.sql`) and is run once in the Supabase SQL editor. Member emails are kept out of the repo, in a git-ignored `supabase/members.local.sql`, because the repo may be public.
 
 ### Errors
 
