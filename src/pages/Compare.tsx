@@ -59,9 +59,10 @@ export default function Compare() {
                 const tone = scoreTone(s.combined === null ? null : s.combined / 10);
                 return (
                   <td key={s.apartmentId} className="p-1.5">
-                    <div className={`rounded-xl px-2 py-2 text-center ${bestTotal.has(i) ? 'ring-1 ring-violet-400/60' : ''}`} style={{ background: tone.bg }}>
+                    <div className={`relative rounded-xl px-2 py-2 text-center ${bestTotal.has(i) ? 'ring-1 ring-violet-400/60' : ''}`} style={{ background: tone.bg }}>
                       <div className="text-xl font-semibold tabular-nums" style={{ color: tone.fg }}>{formatTotal(s.combined)}</div>
                       <PersonScores members={members} values={s.totals.map((t) => (t === null ? null : formatTotal(t)))} />
+                      {bestTotal.has(i) && <Crown size={14} className="absolute top-1.5 right-2 text-violet-300" />}
                     </div>
                   </td>
                 );
@@ -81,13 +82,14 @@ export default function Compare() {
                     const tone = scoreTone(average(values));
                     return (
                       <td key={cols[i].id} className="p-1.5">
-                        <div className={`flex flex-col items-center gap-0.5 rounded-lg px-2 py-1.5 ${best.has(i) ? 'ring-1 ring-violet-400/60' : ''}`}
+                        <div className={`relative flex flex-col items-center gap-0.5 rounded-lg px-2 py-1.5 ${best.has(i) ? 'ring-1 ring-violet-400/60' : ''}`}
                           style={{ background: tone.bg }}>
                           <span className="flex items-center gap-1 text-base font-semibold tabular-nums" style={{ color: tone.fg }}>
                             {formatAverage(average(values))}
                             {isDisagreement(values) && <Zap size={12} className="text-amber-400" />}
                           </span>
                           <PersonScores members={members} values={values} />
+                          {best.has(i) && <Crown size={12} className="absolute top-1 right-1.5 text-violet-300" />}
                         </div>
                       </td>
                     );
@@ -111,7 +113,9 @@ function FactRow({ label, values, best }: { label: string; values: string[]; bes
     <tr className="border-t border-line">
       <th className={`${stickyCell} font-medium text-zinc-300`}>{label}</th>
       {values.map((v, i) => (
-        <td key={i} className={`px-2 py-2.5 text-center tabular-nums ${best.has(i) ? 'font-semibold text-emerald-300' : 'text-zinc-300'}`}>{v}</td>
+        <td key={i} className={`px-2 py-2.5 text-center tabular-nums ${best.has(i) ? 'font-semibold text-emerald-300' : 'text-zinc-300'}`}>
+          <span className="inline-flex items-center gap-1">{v}{best.has(i) && <Crown size={12} className="text-violet-300" />}</span>
+        </td>
       ))}
     </tr>
   );
