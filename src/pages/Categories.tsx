@@ -1,10 +1,13 @@
 import { useEffect, useState, type FormEvent } from 'react';
+import { ArrowDown, ArrowUp, Plus, Trash2 } from 'lucide-react';
 import { useData } from '../lib/data';
+import PageHeader from '../components/PageHeader';
 import type { Category } from '../lib/types';
 
 export default function Categories() {
   const { categories, addCategory } = useData();
   const [newName, setNewName] = useState('');
+  const totalWeight = categories.reduce((sum, c) => sum + c.weight, 0);
 
   async function onAdd(e: FormEvent) {
     e.preventDefault();
@@ -16,24 +19,22 @@ export default function Categories() {
 
   return (
     <div className="mx-auto max-w-xl space-y-4">
-      <div>
-        <h1 className="text-xl font-bold">Categories & weights</h1>
-        <p className="text-sm text-slate-500">Weight = how much it matters: 0 = ignore, 5 = crucial. Changes re-rank everything instantly.</p>
-      </div>
-      <ul className="card divide-y divide-slate-100 p-0">
+      <PageHeader title="Weights" subtitle="How much each category matters: 0 = ignore, 5 = crucial. Re-ranks instantly." />
+      <ul className="space-y-2">
         {categories.map((c, i) => (
-          <CategoryRow key={c.id} category={c} isFirst={i === 0} isLast={i === categories.length - 1} />
+          <CategoryRow key={c.id} category={c} totalWeight={totalWeight} isFirst={i === 0} isLast={i === categories.length - 1} />
         ))}
       </ul>
       <form onSubmit={onAdd} className="flex gap-2">
         <input className="input" placeholder="New category, e.g. Parking" value={newName} onChange={(e) => setNewName(e.target.value)} />
-        <button className="btn-primary shrink-0">Add</button>
+        <button className="btn-primary shrink-0"><Plus size={16} />Add</button>
       </form>
     </div>
   );
 }
 
-function CategoryRow({ category, isFirst, isLast }: { category: Category; isFirst: boolean; isLast: boolean }) {
+function CategoryRow({ category, isFirst, isLast, totalWeight }: { category: Category; isFirst: boolean; isLast: boolean; totalWeight: number }) {
+  const share = totalWeight ? Math.round((category.weight / totalWeight) * 100) : 0;
   const { updateCategory, deleteCategory, moveCategory } = useData();
   const [name, setName] = useState(category.name);
   useEffect(() => setName(category.name), [category.name]);
@@ -45,27 +46,25 @@ function CategoryRow({ category, isFirst, isLast }: { category: Category; isFirs
   }
 
   return (
-    <li className="space-y-2 p-3">
-      <div className="flex gap-1.5">
-        <input className="input" value={name} aria-label="Category name"
+    <li className="card space-y-3 p-3">
+      <div className="flex items-center gap-1">
+        <input className="input border-transparent bg-transparent px-2 font-medium hover:border-line" value={name} aria-label="Category name"
           onChange={(e) => setName(e.target.value)} onBlur={commitName}
           onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur(); }} />
-        <button type="button" className="btn px-2.5" disabled={isFirst} aria-label="Move up" onClick={() => moveCategory(category.id, -1)}>↑</button>
-        <button type="button" className="btn px-2.5" disabled={isLast} aria-label="Move down" onClick={() => moveCategory(category.id, 1)}>↓</button>
-        <button type="button" className="btn-danger px-2.5" aria-label="Delete"
-          onClick={() => { if (confirm(`Delete "${category.name}"? All scores in this category will be deleted.`)) deleteCategory(category.id); }}>✕</button>
+        <span className="w-10 shrink-0 text-right text-xs text-zinc-500 tabular-nums">{share}%</span>
+        <button type="button" className="btn-icon" disabled={isFirst} aria-label="Move up" onClick={() => moveCategory(category.id, -1)}><ArrowUp size={16} /></button>
+        <button type="button" className="btn-icon" disabled={isLast} aria-label="Move down" onClick={() => moveCategory(category.id, 1)}><ArrowDown size={16} /></button>
+        <button type="button" className="btn-icon hover:text-rose-400" aria-label="Delete"
+          onClick={() => { if (confirm(`Delete "${category.name}"? All scores in this category will be deleted.`)) deleteCategory(category.id); }}><Trash2 size={16} /></button>
       </div>
-      <div className="flex items-center gap-2">
-        <span className="w-14 text-xs text-slate-500">Weight</span>
-        <div className="grid flex-1 grid-cols-6 gap-1">
-          {[0, 1, 2, 3, 4, 5].map((w) => (
-            <button key={w} type="button" aria-pressed={category.weight === w}
-              onClick={() => updateCategory(category.id, { weight: w })}
-              className={`h-9 rounded-md text-sm font-semibold ${category.weight === w ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-600'}`}>
-              {w}
-            </button>
-          ))}
-        </div>
+      <div className="grid grid-cols-6 gap-1">
+        {[0, 1, 2, 3, 4, 5].map((w) => (
+          <button key={w} type="button" aria-pressed={category.weight === w}
+            onClick={() => updateCategory(category.id, { weight: w })}
+            className={`h-9 rounded-lg text-sm font-semibold transition active:scale-95 ${category.weight === w ? 'bg-linear-to-br from-violet-500 to-indigo-600 text-white shadow-lg shadow-violet-950/50' : 'bg-surface-2 text-zinc-500 hover:text-zinc-200'}`}>
+            {w}
+          </button>
+        ))}
       </div>
     </li>
   );

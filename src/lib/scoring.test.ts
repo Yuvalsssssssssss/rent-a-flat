@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   average, formatTotal, getScore, indexScores, isDisagreement,
-  personTotal, rankSummaries, scoreColor, summarize,
+  personTotal, rankSummaries, scoreTone, summarize,
 } from './scoring';
 import type { Category, Score } from './types';
 
@@ -85,10 +85,10 @@ describe('helpers', () => {
     expect(isDisagreement([2, 4])).toBe(false);
     expect(isDisagreement([2, null])).toBe(false);
   });
-  it('scoreColor maps 1 to red, 10 to green, null to grey', () => {
-    expect(scoreColor(1)).toBe('hsl(0 70% 85%)');
-    expect(scoreColor(10)).toBe('hsl(120 70% 85%)');
-    expect(scoreColor(null)).toBe('#e5e7eb');
+  it('scoreTone maps 1 to red, 10 to green, null to muted', () => {
+    expect(scoreTone(1).fg).toBe('hsl(0 85% 65%)');
+    expect(scoreTone(10).fg).toBe('hsl(130 85% 65%)');
+    expect(scoreTone(null).fg).toBe('#71717a');
   });
   it('formatTotal rounds or shows a dash', () => {
     expect(formatTotal(69.6)).toBe('70');

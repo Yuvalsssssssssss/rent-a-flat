@@ -67,11 +67,13 @@ export function isDisagreement(values: (number | null)[]): boolean {
   return present.length >= 2 && Math.max(...present) - Math.min(...present) >= 3;
 }
 
-/** Background colour for a 1–10 value: red (1) → green (10); grey when null. */
-export function scoreColor(score: number | null): string {
-  if (score === null) return '#e5e7eb';
-  const t = (Math.min(10, Math.max(1, score)) - 1) / 9;
-  return `hsl(${Math.round(t * 120)} 70% 85%)`;
+export type Tone = { bg: string; fg: string };
+
+/** Colours for a 1–10 value on a dark UI: red (1) → green (10); muted when null. */
+export function scoreTone(score: number | null): Tone {
+  if (score === null) return { bg: 'rgb(255 255 255 / 0.04)', fg: '#71717a' };
+  const hue = Math.round(((Math.min(10, Math.max(1, score)) - 1) / 9) * 130);
+  return { bg: `hsl(${hue} 75% 50% / 0.16)`, fg: `hsl(${hue} 85% 65%)` };
 }
 
 export function formatTotal(total: number | null): string {

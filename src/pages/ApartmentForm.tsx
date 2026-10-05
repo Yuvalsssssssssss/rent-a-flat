@@ -1,4 +1,5 @@
 import { useState, type ChangeEvent, type FormEvent } from 'react';
+import { ArrowLeft } from 'lucide-react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useData } from '../lib/data';
 import { EMPTY_FORM, toForm, toInput, type FormState } from '../lib/apartmentForm';
@@ -12,7 +13,7 @@ export default function ApartmentForm() {
   const [form, setForm] = useState<FormState>(() => (existing ? toForm(existing) : EMPTY_FORM));
   const [saving, setSaving] = useState(false);
 
-  if (id && !existing) return <p className="card">Apartment not found. <Link to="/" className="underline">Back</Link></p>;
+  if (id && !existing) return <p className="card">Apartment not found. <Link to="/" className="text-violet-300 underline">Back</Link></p>;
 
   const bind = (k: keyof FormState) => ({
     value: form[k],
@@ -29,7 +30,8 @@ export default function ApartmentForm() {
 
   return (
     <form onSubmit={onSubmit} className="mx-auto max-w-xl space-y-4">
-      <h1 className="text-xl font-bold">{id ? 'Edit apartment' : 'Add apartment'}</h1>
+      <button type="button" onClick={() => navigate(-1)} className="inline-flex items-center gap-1 text-sm text-zinc-400 hover:text-zinc-200"><ArrowLeft size={16} />Back</button>
+      <h1 className="text-2xl font-semibold tracking-tight">{id ? 'Edit apartment' : 'New apartment'}</h1>
       <div className="card space-y-4">
         <Field label="Name *"><input className="input" required placeholder="e.g. Sunny 2BR near the park" {...bind('name')} /></Field>
         <Field label="Address"><input className="input" {...bind('address')} /></Field>
@@ -46,13 +48,13 @@ export default function ApartmentForm() {
         <Field label="Video links (one per line)" hint="Google Drive or YouTube. In Drive: Share → General access → Anyone with the link.">
           <textarea className="input min-h-20" placeholder="https://drive.google.com/file/d/…" {...bind('video_urls')} />
         </Field>
-        <Field label="Pros"><textarea className="input min-h-20" {...bind('pros')} /></Field>
-        <Field label="Cons"><textarea className="input min-h-20" {...bind('cons')} /></Field>
+        <Field label="Pros"><textarea className="input min-h-20" placeholder="Great view, quiet street…" {...bind('pros')} /></Field>
+        <Field label="Cons"><textarea className="input min-h-20" placeholder="No balcony, pricey…" {...bind('cons')} /></Field>
         <Field label="Notes"><textarea className="input min-h-20" {...bind('notes')} /></Field>
       </div>
-      <div className="flex gap-2">
-        <button className="btn-primary" disabled={saving}>{saving ? 'Saving…' : 'Save'}</button>
-        <button type="button" className="btn" onClick={() => navigate(-1)}>Cancel</button>
+      <div className="sticky bottom-24 z-20 flex gap-2 rounded-2xl border border-line bg-surface/90 p-2 shadow-2xl shadow-black/60 backdrop-blur-xl sm:bottom-4">
+        <button type="button" className="btn flex-1" onClick={() => navigate(-1)}>Cancel</button>
+        <button className="btn-primary flex-[2]" disabled={saving}>{saving ? 'Saving…' : 'Save apartment'}</button>
       </div>
     </form>
   );
