@@ -2,6 +2,7 @@ import { Link, NavLink, Outlet } from 'react-router-dom';
 import { Columns3, LogOut, Plus, SlidersHorizontal, Trophy } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useData } from '../lib/data';
+import { personColor } from '../lib/people';
 
 const TABS = [
   { to: '/', label: 'Ranking', icon: Trophy, end: true },
@@ -31,7 +32,7 @@ export default function Layout() {
           </nav>
           <div className="flex items-center gap-1.5">
             <Link to="/apartment/new" className="btn-primary hidden sm:inline-flex"><Plus size={16} />Add</Link>
-            <span title={myName} className="grid h-8 w-8 place-items-center rounded-full bg-violet-500/15 text-sm font-semibold text-violet-300 ring-1 ring-violet-500/30">
+            <span title={myName} className="grid h-8 w-8 place-items-center rounded-full bg-white/5 text-sm font-semibold ring-1 ring-current" style={{ color: personColor(members, me) }}>
               {myName.charAt(0).toUpperCase()}
             </span>
             <button className="btn-icon h-8 w-8" aria-label="Sign out" title="Sign out" onClick={() => supabase.auth.signOut()}>

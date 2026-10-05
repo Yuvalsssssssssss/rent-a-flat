@@ -4,6 +4,8 @@ import { useData } from '../lib/data';
 import { average, formatTotal, getScore, isDisagreement, rankSummaries, scoreTone, summarize } from '../lib/scoring';
 import { formatEuro } from '../lib/format';
 import PageHeader from '../components/PageHeader';
+import PersonScores from '../components/PersonScores';
+import { colorAt, initial } from '../lib/people';
 
 const stickyCell = 'sticky left-0 z-10 bg-surface px-3 py-2 text-left break-words';
 
@@ -33,7 +35,7 @@ export default function Compare() {
   return (
     <div>
       <PageHeader title="Compare"
-        subtitle={<>Cells show {members.map((m) => m.display_name).join(' · ')}. <Zap size={12} className="inline text-amber-400" /> = 3+ apart. <Crown size={12} className="inline text-violet-300" /> = best in row.</>} />
+        subtitle={<>Big number = average. {members.map((m, k) => <span key={m.email}><b style={{ color: colorAt(k) }}>{initial(m.display_name)}</b> = {m.display_name}. </span>)}<Zap size={12} className="inline text-amber-400" /> = 3+ apart. <Crown size={12} className="inline text-violet-300" /> = best in row.</>} />
       <div className="overflow-x-auto rounded-2xl border border-line bg-surface">
         <table className="w-full table-fixed border-collapse text-sm" style={{ minWidth: `${9 + cols.length * 8}rem` }}>
           <colgroup>
@@ -59,7 +61,7 @@ export default function Compare() {
                   <td key={s.apartmentId} className="p-1.5">
                     <div className={`rounded-xl px-2 py-2 text-center ${bestTotal.has(i) ? 'ring-1 ring-violet-400/60' : ''}`} style={{ background: tone.bg }}>
                       <div className="text-xl font-semibold tabular-nums" style={{ color: tone.fg }}>{formatTotal(s.combined)}</div>
-                      <div className="text-[11px] text-zinc-400 tabular-nums">{s.totals.map(formatTotal).join(' · ')}</div>
+                      <PersonScores members={members} values={s.totals.map((t) => (t === null ? null : formatTotal(t)))} />
                     </div>
                   </td>
                 );
@@ -79,10 +81,13 @@ export default function Compare() {
                     const tone = scoreTone(average(values));
                     return (
                       <td key={cols[i].id} className="p-1.5">
-                        <div className={`flex items-center justify-center gap-1 rounded-lg px-2 py-2 font-medium tabular-nums ${best.has(i) ? 'ring-1 ring-violet-400/60' : ''}`}
-                          style={{ background: tone.bg, color: tone.fg }}>
-                          {values.map((v) => v ?? '–').join(' · ')}
-                          {isDisagreement(values) && <Zap size={12} className="text-amber-400" />}
+                        <div className={`flex flex-col items-center gap-0.5 rounded-lg px-2 py-1.5 ${best.has(i) ? 'ring-1 ring-violet-400/60' : ''}`}
+                          style={{ background: tone.bg }}>
+                          <span className="flex items-center gap-1 text-base font-semibold tabular-nums" style={{ color: tone.fg }}>
+                            {formatAverage(average(values))}
+                            {isDisagreement(values) && <Zap size={12} className="text-amber-400" />}
+                          </span>
+                          <PersonScores members={members} values={values} />
                         </div>
                       </td>
                     );
@@ -95,6 +100,10 @@ export default function Compare() {
       </div>
     </div>
   );
+}
+
+function formatAverage(v: number | null): string {
+  return v === null ? '—' : String(Math.round(v * 10) / 10);
 }
 
 function FactRow({ label, values, best }: { label: string; values: string[]; best: Set<number> }) {

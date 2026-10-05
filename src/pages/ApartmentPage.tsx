@@ -6,6 +6,7 @@ import { getScore, summarize } from '../lib/scoring';
 import { formatEuro } from '../lib/format';
 import ScoreRing from '../components/ScoreRing';
 import PersonBar from '../components/PersonBar';
+import { colorAt, personColor } from '../lib/people';
 import ScoreRow from '../components/ScoreRow';
 import VideoEmbed from '../components/VideoEmbed';
 
@@ -48,7 +49,7 @@ export default function ApartmentPage() {
             <h1 className="text-2xl font-semibold tracking-tight">{a.name}</h1>
             {a.address && <p className="mt-1 flex items-center gap-1 text-sm text-zinc-400"><MapPin size={14} className="shrink-0" />{a.address}</p>}
             <div className="mt-3 space-y-1.5">
-              {members.map((m, k) => <PersonBar key={m.email} name={m.display_name} value={s.totals[k]} />)}
+              {members.map((m, k) => <PersonBar key={m.email} name={m.display_name} value={s.totals[k]} color={colorAt(k)} />)}
             </div>
           </div>
           <ScoreRing value={s.combined} size={92} stroke={8} />
@@ -84,7 +85,7 @@ export default function ApartmentPage() {
           <h2 className="font-semibold">Your scores</h2>
           {partner && (
             <span className="flex items-center gap-1.5 text-xs text-zinc-400">
-              <span className="h-2 w-2 rounded-full bg-cyan-400" />{partner.display_name}'s pick
+              <span className="h-2 w-2 rounded-full" style={{ background: personColor(members, partner.user_id) }} />{partner.display_name}'s pick
             </span>
           )}
         </div>
@@ -94,6 +95,8 @@ export default function ApartmentPage() {
             <ScoreRow key={c.id} category={c}
               mine={getScore(scoreIndex, a.id, c.id, me)}
               partnerScore={partner ? getScore(scoreIndex, a.id, c.id, partner.user_id) : null}
+              partnerColor={personColor(members, partner?.user_id ?? null)}
+              myColor={personColor(members, me)}
               onChange={(v) => setScore(a.id, c.id, v)} />
           ))}
         </ul>

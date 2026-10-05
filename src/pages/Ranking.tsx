@@ -6,6 +6,7 @@ import { formatEuro } from '../lib/format';
 import PageHeader from '../components/PageHeader';
 import ScoreRing from '../components/ScoreRing';
 import PersonBar from '../components/PersonBar';
+import { colorAt } from '../lib/people';
 
 export default function Ranking() {
   const { apartments, categories, scoreIndex, members } = useData();
@@ -57,7 +58,7 @@ export default function Ranking() {
                     {a.rooms !== null && <span className="chip"><BedDouble size={11} />{a.rooms}</span>}
                   </div>
                   <div className="mt-2.5 space-y-1">
-                    {members.map((m, k) => <PersonBar key={m.email} name={m.display_name} value={s.totals[k]} />)}
+                    {members.map((m, k) => <PersonBar key={m.email} name={m.display_name} value={s.totals[k]} color={colorAt(k)} />)}
                   </div>
                   {s.incomplete && (
                     <p className="mt-2 flex items-center gap-1.5 text-[11px] text-amber-300/80">

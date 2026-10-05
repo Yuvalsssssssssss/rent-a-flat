@@ -6,10 +6,12 @@ type Props = {
   category: Category;
   mine: number | null;
   partnerScore: number | null;
+  partnerColor: string;
+  myColor: string;
   onChange: (score: number | null) => void;
 };
 
-export default function ScoreRow({ category, mine, partnerScore, onChange }: Props) {
+export default function ScoreRow({ category, mine, partnerScore, partnerColor, myColor, onChange }: Props) {
   return (
     <li className="py-3.5">
       <div className="mb-2 flex items-center justify-between gap-2">
@@ -23,10 +25,10 @@ export default function ScoreRow({ category, mine, partnerScore, onChange }: Pro
             <button key={n} type="button" aria-pressed={selected} aria-label={`${category.name} ${n}`}
               onClick={() => onChange(selected ? null : n)}
               className={`relative h-10 rounded-lg text-sm font-semibold tabular-nums transition active:scale-90 ${selected ? 'text-zinc-950 shadow-lg' : 'bg-surface-2 text-zinc-400 hover:text-zinc-100'}`}
-              style={selected ? { background: scoreTone(n).fg } : undefined}>
+              style={selected ? { background: scoreTone(n).fg, boxShadow: `0 0 0 2px ${myColor}` } : undefined}>
               {n}
               {partnerScore === n && (
-                <span className="absolute -bottom-1 left-1/2 h-2 w-2 -translate-x-1/2 rounded-full bg-cyan-400 ring-2 ring-surface" />
+                <span className="absolute -bottom-1 left-1/2 h-2 w-2 -translate-x-1/2 rounded-full ring-2 ring-surface" style={{ background: partnerColor }} />
               )}
             </button>
           );
