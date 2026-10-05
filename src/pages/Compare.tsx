@@ -5,7 +5,7 @@ import { average, formatTotal, getScore, isDisagreement, rankSummaries, scoreTon
 import { formatEuro } from '../lib/format';
 import PageHeader from '../components/PageHeader';
 
-const stickyCell = 'sticky left-0 z-10 bg-surface px-3 py-2 text-left';
+const stickyCell = 'sticky left-0 z-10 bg-surface px-3 py-2 text-left break-words';
 
 /** Indexes of the best values (ties included); empty when there's nothing to compare. */
 function bestOf(values: (number | null)[], prefer: 'high' | 'low'): Set<number> {
@@ -35,12 +35,16 @@ export default function Compare() {
       <PageHeader title="Compare"
         subtitle={<>Cells show {members.map((m) => m.display_name).join(' · ')}. <Zap size={12} className="inline text-amber-400" /> = 3+ apart. <Crown size={12} className="inline text-violet-300" /> = best in row.</>} />
       <div className="overflow-x-auto rounded-2xl border border-line bg-surface">
-        <table className="min-w-full border-collapse text-sm">
+        <table className="w-full table-fixed border-collapse text-sm" style={{ minWidth: `${9 + cols.length * 8}rem` }}>
+          <colgroup>
+            <col className="w-36 sm:w-52" />
+            {cols.map((a) => <col key={a.id} />)}
+          </colgroup>
           <thead>
             <tr>
               <th className={`${stickyCell} text-xs font-medium text-zinc-500 uppercase`}>Category</th>
               {cols.map((a) => (
-                <th key={a.id} className="min-w-28 px-2 py-3 text-center font-semibold">
+                <th key={a.id} className="px-2 py-3 text-center align-bottom font-semibold leading-snug break-words">
                   <Link to={`/apartment/${a.id}`} className="hover:text-violet-300">{a.name}</Link>
                 </th>
               ))}
