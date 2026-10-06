@@ -6,6 +6,7 @@ import { apartmentMarker, placeMarker } from '../lib/mapMarkers';
 import LeafletMap from '../components/LeafletMap';
 import PageHeader from '../components/PageHeader';
 import PlacesEditor from '../components/PlacesEditor';
+import { isRejected } from '../lib/tags';
 
 export default function MapPage() {
   const { apartments, places, categories, scoreIndex, members } = useData();
@@ -17,7 +18,7 @@ export default function MapPage() {
     ...places.map(placeMarker),
     ...located.map((a) => apartmentMarker(a, summarize(a.id, categories, scoreIndex, memberIds).combined, {
       onClick: () => navigate(`/apartment/${a.id}`),
-    })),
+    }, isRejected(a))),
   ];
 
   return (

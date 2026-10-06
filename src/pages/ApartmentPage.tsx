@@ -9,6 +9,7 @@ import PersonBar from '../components/PersonBar';
 import { colorAt, personColor } from '../lib/people';
 import ScoreRow from '../components/ScoreRow';
 import VideoEmbed from '../components/VideoEmbed';
+import { TagToggles } from '../components/Tags';
 import LeafletMap from '../components/LeafletMap';
 import { DEFAULT_CENTER, hasLocation, pricePerM2, walkMinutes } from '../lib/geo';
 import { apartmentMarker, placeMarker } from '../lib/mapMarkers';
@@ -52,6 +53,7 @@ export default function ApartmentPage() {
           <div className="min-w-0 flex-1">
             <h1 className="text-2xl font-semibold tracking-tight break-words">{a.name}</h1>
             {a.address && <p className="mt-1 flex items-center gap-1 text-sm text-zinc-400"><MapPin size={14} className="shrink-0" />{a.address}</p>}
+            <div className="mt-3"><TagToggles apartment={a} /></div>
             <div className="mt-3 space-y-1.5">
               {members.map((m, k) => <PersonBar key={m.email} name={m.display_name} value={s.totals[k]} color={colorAt(k)} />)}
             </div>

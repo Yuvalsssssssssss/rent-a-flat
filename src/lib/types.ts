@@ -21,10 +21,11 @@ export type Apartment = {
   cons: string | null;
   lat: number | null;
   lng: number | null;
+  tags: string[];
   created_at: string;
 };
 
-export type ApartmentInput = Omit<Apartment, 'id' | 'created_at' | 'lat' | 'lng'>;
+export type ApartmentInput = Omit<Apartment, 'id' | 'created_at' | 'lat' | 'lng' | 'tags'>;
 
 export type Place = {
   id: string;

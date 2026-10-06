@@ -18,6 +18,7 @@ type DataContextValue = {
   reload: () => Promise<void>;
   saveApartment: (input: ApartmentInput & { lat?: number | null; lng?: number | null }, id?: string) => Promise<string | null>;
   setLocation: (apartmentId: string, lat: number, lng: number) => Promise<void>;
+  setTags: (apartmentId: string, tags: string[]) => Promise<void>;
   addPlace: (place: Omit<Place, 'id'>) => Promise<void>;
   deletePlace: (id: string) => Promise<void>;
   deleteApartment: (id: string) => Promise<boolean>;
@@ -87,6 +88,12 @@ export function DataProvider({ userId, children }: { userId: string; children: R
     setApartments((list) => list.map((x) => (x.id === apartmentId ? { ...x, lat, lng } : x)));
     const { error } = await supabase.from('apartments').update({ lat, lng }).eq('id', apartmentId);
     if (error) fail('save location', error.message);
+  };
+
+  const setTags = async (apartmentId: string, tags: string[]) => {
+    setApartments((list) => list.map((x) => (x.id === apartmentId ? { ...x, tags } : x)));
+    const { error } = await supabase.from('apartments').update({ tags }).eq('id', apartmentId);
+    if (error) fail('save tags', error.message);
   };
 
   const addPlace = async (place: Omit<Place, 'id'>) => {
@@ -162,7 +169,7 @@ export function DataProvider({ userId, children }: { userId: string; children: R
   return (
     <DataContext.Provider value={{
       status, me: userId, members, categories, apartments, scores, places, scoreIndex, reload,
-      saveApartment, setLocation, addPlace, deletePlace, deleteApartment, setScore, addCategory, updateCategory, deleteCategory, moveCategory,
+      saveApartment, setLocation, setTags, addPlace, deletePlace, deleteApartment, setScore, addCategory, updateCategory, deleteCategory, moveCategory,
     }}>
       {children}
     </DataContext.Provider>
