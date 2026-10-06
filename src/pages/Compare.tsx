@@ -49,7 +49,7 @@ export default function Compare() {
         {members.map((m, k) => (
           <span key={m.email} className="chip"><b style={{ color: colorAt(k) }}>{initial(m.display_name)}</b>{m.display_name}</span>
         ))}
-        <span className="chip"><Zap size={12} className="text-amber-400" />3+ apart</span>
+        <span className="chip"><Zap size={12} className="text-amber-400" />Disagree (3+ pts)</span>
         <span className="chip"><Crown size={12} className="text-violet-300" />Best in row</span>
       </div>
       <div className="max-h-[calc(100dvh-14rem)] overflow-auto overscroll-contain rounded-2xl border border-line bg-surface sm:max-h-[calc(100dvh-12rem)]">
