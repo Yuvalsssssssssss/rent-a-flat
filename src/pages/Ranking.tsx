@@ -41,7 +41,7 @@ export default function Ranking() {
           return (
             <li key={a.id}>
               <Link to={`/apartment/${a.id}`}
-                className={`group relative flex items-center gap-4 rounded-2xl border bg-surface p-4 transition hover:bg-surface-2 ${top ? 'border-violet-500/40 shadow-[0_12px_40px_-12px_rgb(139_92_246/0.45)]' : 'border-line'}`}>
+                className={`group relative flex h-full items-center gap-4 rounded-2xl border bg-surface p-4 transition hover:bg-surface-2 ${top ? 'border-violet-500/40 shadow-[0_12px_40px_-12px_rgb(139_92_246/0.45)]' : 'border-line'}`}>
                 <ScoreRing value={s.combined} size={68} />
                 <div className="min-w-0 flex-1">
                   <div className="flex items-start gap-2">
