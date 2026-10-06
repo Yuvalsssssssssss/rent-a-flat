@@ -3,6 +3,7 @@ import { Crown, Zap } from 'lucide-react';
 import { useData } from '../lib/data';
 import { average, formatTotal, getScore, isDisagreement, rankSummaries, scoreTone, summarize } from '../lib/scoring';
 import { formatEuro } from '../lib/format';
+import { hasLocation, pricePerM2, walkMinutes } from '../lib/geo';
 import PageHeader from '../components/PageHeader';
 import PersonScores from '../components/PersonScores';
 import { colorAt, initial } from '../lib/people';
@@ -18,7 +19,7 @@ function bestOf(values: (number | null)[], prefer: 'high' | 'low'): Set<number> 
 }
 
 export default function Compare() {
-  const { apartments, categories, scoreIndex, members } = useData();
+  const { apartments, categories, scoreIndex, members, places } = useData();
   const memberIds = members.map((m) => m.user_id);
   const summaries = rankSummaries(apartments.map((a) => summarize(a.id, categories, scoreIndex, memberIds)));
   const byId = new Map(apartments.map((a) => [a.id, a]));
@@ -30,6 +31,8 @@ export default function Compare() {
 
   const bestRent = bestOf(cols.map((a) => a.rent_eur), 'low');
   const bestSize = bestOf(cols.map((a) => a.size_m2), 'high');
+  const ppm = cols.map((a) => pricePerM2(a.rent_eur, a.size_m2));
+  const walks = places.map((p) => cols.map((a) => (hasLocation(a) ? walkMinutes(a, p) : null)));
   const bestTotal = bestOf(summaries.map((s) => s.combined), 'high');
 
   return (
@@ -70,6 +73,10 @@ export default function Compare() {
             </tr>
             <FactRow label="Rent" values={cols.map((a) => formatEuro(a.rent_eur))} best={bestRent} />
             <FactRow label="Size" values={cols.map((a) => (a.size_m2 === null ? '—' : `${a.size_m2} m²`))} best={bestSize} />
+            <FactRow label="€ / m²" values={ppm.map((v) => (v === null ? '—' : `€${v.toFixed(1)}`))} best={bestOf(ppm, 'low')} />
+            {places.map((p, pi) => (
+              <FactRow key={p.id} label={`${p.emoji} ${p.name}`} values={walks[pi].map((v) => (v === null ? '—' : `~${v} min`))} best={bestOf(walks[pi], 'low')} />
+            ))}
             {categories.map((c) => {
               const cells = cols.map((a) => memberIds.map((u) => getScore(scoreIndex, a.id, c.id, u)));
               const best = bestOf(cells.map(average), 'high');

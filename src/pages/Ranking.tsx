@@ -3,13 +3,14 @@ import { BedDouble, ChevronRight, Crown, Euro, Home, Plus, Ruler } from 'lucide-
 import { useData } from '../lib/data';
 import { rankSummaries, summarize } from '../lib/scoring';
 import { formatEuro } from '../lib/format';
+import { hasLocation, pricePerM2, walkMinutes } from '../lib/geo';
 import PageHeader from '../components/PageHeader';
 import ScoreRing from '../components/ScoreRing';
 import PersonBar from '../components/PersonBar';
 import { colorAt } from '../lib/people';
 
 export default function Ranking() {
-  const { apartments, categories, scoreIndex, members } = useData();
+  const { apartments, categories, scoreIndex, members, places } = useData();
   const memberIds = members.map((m) => m.user_id);
   const ranked = rankSummaries(apartments.map((a) => summarize(a.id, categories, scoreIndex, memberIds)));
   const byId = new Map(apartments.map((a) => [a.id, a]));
@@ -55,7 +56,9 @@ export default function Ranking() {
                   <div className="mt-1.5 flex flex-wrap gap-1.5">
                     {a.rent_eur !== null && <span className="chip"><Euro size={11} />{formatEuro(a.rent_eur).replace('€', '')}/mo</span>}
                     {a.size_m2 !== null && <span className="chip"><Ruler size={11} />{a.size_m2} m²</span>}
+                    {pricePerM2(a.rent_eur, a.size_m2) !== null && <span className="chip">€{pricePerM2(a.rent_eur, a.size_m2)!.toFixed(1)}/m²</span>}
                     {a.rooms !== null && <span className="chip"><BedDouble size={11} />{a.rooms}</span>}
+                    {hasLocation(a) && places.slice(0, 3).map((p) => <span key={p.id} className="chip" title={p.name}>{p.emoji} {walkMinutes(a, p)}′</span>)}
                   </div>
                   <div className="mt-2.5 space-y-1">
                     {members.map((m, k) => <PersonBar key={m.email} name={m.display_name} value={s.totals[k]} color={colorAt(k)} />)}

@@ -2,7 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 import { supabase } from './supabase';
 import { useToast } from '../components/Toast';
 import { indexScores, type ScoreIndex } from './scoring';
-import type { Apartment, ApartmentInput, Category, Member, Score } from './types';
+import type { Apartment, ApartmentInput, Category, Member, Place, Score } from './types';
 
 type Status = 'loading' | 'ready' | 'error';
 
@@ -13,9 +13,13 @@ type DataContextValue = {
   categories: Category[];
   apartments: Apartment[];
   scores: Score[];
+  places: Place[];
   scoreIndex: ScoreIndex;
   reload: () => Promise<void>;
-  saveApartment: (input: ApartmentInput, id?: string) => Promise<string | null>;
+  saveApartment: (input: ApartmentInput & { lat?: number | null; lng?: number | null }, id?: string) => Promise<string | null>;
+  setLocation: (apartmentId: string, lat: number, lng: number) => Promise<void>;
+  addPlace: (place: Omit<Place, 'id'>) => Promise<void>;
+  deletePlace: (id: string) => Promise<void>;
   deleteApartment: (id: string) => Promise<boolean>;
   setScore: (apartmentId: string, categoryId: string, score: number | null) => Promise<void>;
   addCategory: (name: string) => Promise<void>;
@@ -33,15 +37,17 @@ export function DataProvider({ userId, children }: { userId: string; children: R
   const [categories, setCategories] = useState<Category[]>([]);
   const [apartments, setApartments] = useState<Apartment[]>([]);
   const [scores, setScores] = useState<Score[]>([]);
+  const [places, setPlaces] = useState<Place[]>([]);
 
   const reload = useCallback(async () => {
-    const [m, c, a, s] = await Promise.all([
+    const [m, c, a, s, p] = await Promise.all([
       supabase.rpc('members'),
       supabase.from('categories').select('id,name,weight,position').order('position').order('created_at'),
       supabase.from('apartments').select('*').order('created_at'),
       supabase.from('scores').select('apartment_id,category_id,user_id,score'),
+      supabase.from('places').select('id,name,emoji,lat,lng').order('created_at'),
     ]);
-    const error = m.error ?? c.error ?? a.error ?? s.error;
+    const error = m.error ?? c.error ?? a.error ?? s.error ?? p.error;
     if (error) {
       setStatus((prev) => (prev === 'ready' ? 'ready' : 'error'));
       toast(`Couldn't load data: ${error.message}`);
@@ -51,6 +57,7 @@ export function DataProvider({ userId, children }: { userId: string; children: R
     setCategories(c.data as Category[]);
     setApartments(a.data as Apartment[]);
     setScores(s.data as Score[]);
+    setPlaces(p.data as Place[]);
     setStatus('ready');
   }, [toast]);
 
@@ -74,6 +81,24 @@ export function DataProvider({ userId, children }: { userId: string; children: R
     const saved = data as Apartment;
     setApartments((list) => (id ? list.map((x) => (x.id === id ? saved : x)) : [...list, saved]));
     return saved.id;
+  };
+
+  const setLocation = async (apartmentId: string, lat: number, lng: number) => {
+    setApartments((list) => list.map((x) => (x.id === apartmentId ? { ...x, lat, lng } : x)));
+    const { error } = await supabase.from('apartments').update({ lat, lng }).eq('id', apartmentId);
+    if (error) fail('save location', error.message);
+  };
+
+  const addPlace = async (place: Omit<Place, 'id'>) => {
+    const { data, error } = await supabase.from('places').insert(place).select('id,name,emoji,lat,lng').single();
+    if (error) { toast(`Couldn't add place: ${error.message}`); return; }
+    setPlaces((list) => [...list, data as Place]);
+  };
+
+  const deletePlace = async (id: string) => {
+    const { error } = await supabase.from('places').delete().eq('id', id);
+    if (error) { toast(`Couldn't delete place: ${error.message}`); return; }
+    setPlaces((list) => list.filter((x) => x.id !== id));
   };
 
   const deleteApartment = async (id: string) => {
@@ -136,8 +161,8 @@ export function DataProvider({ userId, children }: { userId: string; children: R
 
   return (
     <DataContext.Provider value={{
-      status, me: userId, members, categories, apartments, scores, scoreIndex, reload,
-      saveApartment, deleteApartment, setScore, addCategory, updateCategory, deleteCategory, moveCategory,
+      status, me: userId, members, categories, apartments, scores, places, scoreIndex, reload,
+      saveApartment, setLocation, addPlace, deletePlace, deleteApartment, setScore, addCategory, updateCategory, deleteCategory, moveCategory,
     }}>
       {children}
     </DataContext.Provider>

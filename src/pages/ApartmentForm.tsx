@@ -4,6 +4,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useData } from '../lib/data';
 import { EMPTY_FORM, toForm, toInput, type FormState } from '../lib/apartmentForm';
 import Field from '../components/Field';
+import { geocodeAddress } from '../lib/geocode';
 
 export default function ApartmentForm() {
   const { id } = useParams();
@@ -23,7 +24,18 @@ export default function ApartmentForm() {
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     setSaving(true);
-    const savedId = await saveApartment(toInput(form), id);
+    const input = toInput(form);
+    let coords: { lat?: number; lng?: number } = {};
+    // Look up the pin only when the address is new or changed, so a manually dragged pin is kept.
+    if (input.address && (!existing || existing.lat === null || input.address !== existing.address)) {
+      try {
+        const found = await geocodeAddress(input.address);
+        if (found) coords = { lat: found.lat, lng: found.lng };
+      } catch {
+        // Map lookup is best-effort; the pin can be placed by hand on the apartment page.
+      }
+    }
+    const savedId = await saveApartment({ ...input, ...coords }, id);
     setSaving(false);
     if (savedId) navigate(`/apartment/${savedId}`, { replace: true });
   }

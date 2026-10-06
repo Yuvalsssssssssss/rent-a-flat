@@ -19,10 +19,20 @@ export type Apartment = {
   notes: string | null;
   pros: string | null;
   cons: string | null;
+  lat: number | null;
+  lng: number | null;
   created_at: string;
 };
 
-export type ApartmentInput = Omit<Apartment, 'id' | 'created_at'>;
+export type ApartmentInput = Omit<Apartment, 'id' | 'created_at' | 'lat' | 'lng'>;
+
+export type Place = {
+  id: string;
+  name: string;
+  emoji: string;
+  lat: number;
+  lng: number;
+};
 
 export type Score = {
   apartment_id: string;

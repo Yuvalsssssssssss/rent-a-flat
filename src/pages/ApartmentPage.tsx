@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, BedDouble, CalendarDays, Euro, ExternalLink, Layers, MapPin, Pencil, Ruler, Trash2 } from 'lucide-react';
+import { ArrowLeft, BedDouble, Calculator, CalendarDays, Euro, ExternalLink, Layers, MapPin, Pencil, Ruler, Trash2 } from 'lucide-react';
 import { useData } from '../lib/data';
 import { getScore, summarize } from '../lib/scoring';
 import { formatEuro } from '../lib/format';
@@ -9,11 +9,14 @@ import PersonBar from '../components/PersonBar';
 import { colorAt, personColor } from '../lib/people';
 import ScoreRow from '../components/ScoreRow';
 import VideoEmbed from '../components/VideoEmbed';
+import LeafletMap from '../components/LeafletMap';
+import { DEFAULT_CENTER, hasLocation, pricePerM2, walkMinutes } from '../lib/geo';
+import { apartmentMarker, placeMarker } from '../lib/mapMarkers';
 
 export default function ApartmentPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { apartments, categories, members, me, scoreIndex, setScore, deleteApartment } = useData();
+  const { apartments, categories, members, me, scoreIndex, places, setScore, setLocation, deleteApartment } = useData();
   const a = apartments.find((x) => x.id === id);
   if (!a) return <p className="card">Apartment not found. <Link to="/" className="text-violet-300 underline">Back</Link></p>;
 
@@ -22,6 +25,7 @@ export default function ApartmentPage() {
   const facts: [ReactNode, string, string | null][] = [
     [<Euro size={12} />, 'Rent', a.rent_eur === null ? null : `${formatEuro(a.rent_eur)}/mo`],
     [<Ruler size={12} />, 'Size', a.size_m2 === null ? null : `${a.size_m2} m²`],
+    [<Calculator size={12} />, '€ / m²', pricePerM2(a.rent_eur, a.size_m2)?.toFixed(1) ?? null],
     [<BedDouble size={12} />, 'Rooms', a.rooms === null ? null : String(a.rooms)],
     [<Layers size={12} />, 'Floor', a.floor],
     [<CalendarDays size={12} />, 'Visited', a.visited_on],
@@ -72,6 +76,27 @@ export default function ApartmentPage() {
           )}
         </section>
       )}
+
+      <section className="card space-y-3">
+        <div className="flex items-center justify-between gap-2">
+          <h2 className="font-semibold">Location</h2>
+          <span className="text-xs text-zinc-500">{hasLocation(a) ? 'Drag the pin to adjust' : 'Tap the map to place the pin'}</span>
+        </div>
+        <LeafletMap
+          center={hasLocation(a) ? a : DEFAULT_CENTER} zoom={16} className="h-60 rounded-xl"
+          markers={[
+            ...places.map(placeMarker),
+            ...(hasLocation(a) ? [apartmentMarker(a, s.combined, { draggable: true, onDragEnd: (lat, lng) => setLocation(a.id, lat, lng) })] : []),
+          ]}
+          onMapClick={hasLocation(a) ? undefined : (lat, lng) => setLocation(a.id, lat, lng)} />
+        {hasLocation(a) && places.length > 0 && (
+          <div className="flex flex-wrap gap-1.5">
+            {places.map((p) => (
+              <span key={p.id} className="chip">{p.emoji} {p.name} · <b className="text-zinc-100">~{walkMinutes(a, p)} min</b></span>
+            ))}
+          </div>
+        )}
+      </section>
 
       {a.video_urls.length > 0 && (
         <section className="card space-y-3">

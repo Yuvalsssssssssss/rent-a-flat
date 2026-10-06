@@ -1,5 +1,5 @@
 import { Link, NavLink, Outlet } from 'react-router-dom';
-import { Columns3, LogOut, Plus, SlidersHorizontal, Trophy } from 'lucide-react';
+import { Columns3, LogOut, MapPinned, Plus, SlidersHorizontal, Trophy } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useData } from '../lib/data';
 import { personColor } from '../lib/people';
@@ -7,6 +7,7 @@ import { personColor } from '../lib/people';
 const TABS = [
   { to: '/', label: 'Ranking', icon: Trophy, end: true },
   { to: '/compare', label: 'Compare', icon: Columns3, end: false },
+  { to: '/map', label: 'Map', icon: MapPinned, end: false },
   { to: '/categories', label: 'Weights', icon: SlidersHorizontal, end: false },
 ];
 

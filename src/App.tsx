@@ -10,6 +10,7 @@ import SignIn from './pages/SignIn';
 import Ranking from './pages/Ranking';
 import Compare from './pages/Compare';
 import Categories from './pages/Categories';
+import MapPage from './pages/MapPage';
 import ApartmentPage from './pages/ApartmentPage';
 import ApartmentForm from './pages/ApartmentForm';
 
@@ -48,6 +49,7 @@ function Gate() {
           <Route index element={<Ranking />} />
           <Route path="compare" element={<Compare />} />
           <Route path="categories" element={<Categories />} />
+          <Route path="map" element={<MapPage />} />
           <Route path="apartment/new" element={<ApartmentForm />} />
           <Route path="apartment/:id" element={<ApartmentPage />} />
           <Route path="apartment/:id/edit" element={<ApartmentForm />} />
