@@ -15,7 +15,7 @@ export default function Layout() {
   const { members, me } = useData();
   const myName = members.find((m) => m.user_id === me)?.display_name ?? '';
   return (
-    <div className="min-h-dvh">
+    <div className="min-h-dvh overflow-x-clip">
       <div aria-hidden className="pointer-events-none fixed inset-x-0 top-0 h-80 bg-[radial-gradient(60%_100%_at_50%_0%,rgb(139_92_246/0.16),transparent)]" />
       <header className="sticky top-0 z-30 border-b border-line/60 bg-bg/70 backdrop-blur-xl">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3">

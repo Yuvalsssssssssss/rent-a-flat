@@ -26,7 +26,7 @@ export default function Categories() {
         ))}
       </ul>
       <form onSubmit={onAdd} className="flex gap-2">
-        <input className="input" placeholder="New category, e.g. Parking" value={newName} onChange={(e) => setNewName(e.target.value)} />
+        <input className="input min-w-0" placeholder="New category, e.g. Parking" value={newName} onChange={(e) => setNewName(e.target.value)} />
         <button className="btn-primary shrink-0"><Plus size={16} />Add</button>
       </form>
     </div>
@@ -48,7 +48,7 @@ function CategoryRow({ category, isFirst, isLast, totalWeight }: { category: Cat
   return (
     <li className="card space-y-3 p-3">
       <div className="flex items-center gap-1">
-        <input className="input border-transparent bg-transparent px-2 font-medium hover:border-line" value={name} aria-label="Category name"
+        <input className="input min-w-0 border-transparent bg-transparent px-2 font-medium hover:border-line" value={name} aria-label="Category name"
           onChange={(e) => setName(e.target.value)} onBlur={commitName}
           onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur(); }} />
         <span className="w-10 shrink-0 text-right text-xs text-zinc-500 tabular-nums">{share}%</span>

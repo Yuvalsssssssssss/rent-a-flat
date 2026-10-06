@@ -52,10 +52,10 @@ export default function PlacesEditor() {
       <form onSubmit={onSearch} className="space-y-2 border-t border-line pt-3">
         <div className="flex gap-2">
           <input className="input w-14 text-center" value={emoji} onChange={(e) => setEmoji(e.target.value)} aria-label="Emoji" />
-          <input className="input" value={name} onChange={(e) => setName(e.target.value)} placeholder="Name, e.g. Work" />
+          <input className="input min-w-0" value={name} onChange={(e) => setName(e.target.value)} placeholder="Name, e.g. Work" />
         </div>
         <div className="flex gap-2">
-          <input className="input" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Address or place to search" />
+          <input className="input min-w-0" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Address or place to search" />
           <button className="btn shrink-0" disabled={busy}><Search size={15} />{busy ? '…' : 'Find'}</button>
         </div>
       </form>
