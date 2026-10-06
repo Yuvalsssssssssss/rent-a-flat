@@ -39,7 +39,7 @@ export default function Compare() {
     <div>
       <PageHeader title="Compare"
         subtitle={<>Big number = average. {members.map((m, k) => <span key={m.email}><b style={{ color: colorAt(k) }}>{initial(m.display_name)}</b> = {m.display_name}. </span>)}<Zap size={12} className="inline text-amber-400" /> = 3+ apart. <Crown size={12} className="inline text-violet-300" /> = best in row.</>} />
-      <div className="overflow-x-auto rounded-2xl border border-line bg-surface">
+      <div className="max-h-[calc(100dvh-14rem)] overflow-auto overscroll-contain rounded-2xl border border-line bg-surface sm:max-h-[calc(100dvh-12rem)]">
         <table className="w-full table-fixed border-collapse text-sm" style={{ minWidth: `${9 + cols.length * 8}rem` }}>
           <colgroup>
             <col className="w-36 sm:w-52" />
@@ -47,9 +47,9 @@ export default function Compare() {
           </colgroup>
           <thead>
             <tr>
-              <th className={`${stickyCell} text-xs font-medium text-zinc-500 uppercase`}>Category</th>
+              <th className={`${stickyCell} top-0 z-30 border-b border-line align-middle text-xs font-medium text-zinc-500 uppercase`}>Category</th>
               {cols.map((a) => (
-                <th key={a.id} className="px-2 py-3 text-center align-bottom font-semibold leading-snug break-words">
+                <th key={a.id} className="sticky top-0 z-20 border-b border-line bg-surface px-2 py-3 text-center align-middle font-semibold leading-snug break-words">
                   <Link to={`/apartment/${a.id}`} className="hover:text-violet-300">{a.name}</Link>
                 </th>
               ))}
