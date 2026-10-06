@@ -90,7 +90,7 @@ export default function Compare() {
               return (
                 <tr key={c.id} className={`border-t border-line ${c.weight === 0 ? 'opacity-40' : ''}`}>
                   <th className={`${stickyCell} font-medium`}>
-                    {c.name} <span className="text-xs font-normal text-zinc-500">×{c.weight}</span>
+                    {c.name}
                   </th>
                   {cells.map((values, i) => {
                     const tone = scoreTone(average(values));
