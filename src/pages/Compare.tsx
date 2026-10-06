@@ -44,8 +44,14 @@ export default function Compare() {
 
   return (
     <div>
-      <PageHeader title="Compare"
-        subtitle={<>Big number = average. {members.map((m, k) => <span key={m.email}><b style={{ color: colorAt(k) }}>{initial(m.display_name)}</b> = {m.display_name}. </span>)}<Zap size={12} className="inline text-amber-400" /> = 3+ apart. <Crown size={12} className="inline text-violet-300" /> = best in row.</>} />
+      <PageHeader title="Compare" subtitle="Big number = average of both scores" />
+      <div className="-mt-3 mb-4 flex flex-wrap gap-1.5">
+        {members.map((m, k) => (
+          <span key={m.email} className="chip"><b style={{ color: colorAt(k) }}>{initial(m.display_name)}</b>{m.display_name}</span>
+        ))}
+        <span className="chip"><Zap size={12} className="text-amber-400" />3+ apart</span>
+        <span className="chip"><Crown size={12} className="text-violet-300" />Best in row</span>
+      </div> = 3+ apart. <Crown size={12} className="inline text-violet-300" /> = best in row.</>} />
       <div className="max-h-[calc(100dvh-14rem)] overflow-auto overscroll-contain rounded-2xl border border-line bg-surface sm:max-h-[calc(100dvh-12rem)]">
         <table className="w-full table-fixed border-collapse text-sm" style={{ minWidth: `${9 + cols.length * 8}rem` }}>
           <colgroup>
