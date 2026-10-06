@@ -30,4 +30,4 @@ body { -webkit-tap-highlight-color: transparent; font-feature-settings: "cv11", 
 .leaflet-control-attribution { background: rgb(9 9 11 / .7) !important; color: #71717a !important; }
 .leaflet-control-attribution a { color: #a1a1aa !important; }
 
-.map-dark { filter: invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.85) saturate(0.6); }
+.map-dark { filter: brightness(0.85) saturate(0.9); }

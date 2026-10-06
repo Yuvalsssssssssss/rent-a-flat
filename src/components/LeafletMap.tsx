@@ -36,7 +36,7 @@ export default function LeafletMap({ markers, center, zoom = 15, fit = false, on
 
   useEffect(() => {
     const map = L.map(el.current!, { zoomControl: false }).setView([center.lat, center.lng], zoom);
-    // Standard OSM tiles (free, no key); darkened by the .map-dark CSS filter in index.css.
+    // Standard OSM tiles (free, no key); slightly dimmed by .map-dark in index.css.
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
       maxZoom: 19,
