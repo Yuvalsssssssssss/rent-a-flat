@@ -29,3 +29,5 @@ body { -webkit-tap-highlight-color: transparent; font-feature-settings: "cv11", 
 .leaflet-control-zoom a { background: #1a1a1f !important; color: #e4e4e7 !important; border-color: #26262c !important; }
 .leaflet-control-attribution { background: rgb(9 9 11 / .7) !important; color: #71717a !important; }
 .leaflet-control-attribution a { color: #a1a1aa !important; }
+
+.map-dark { filter: invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.85) saturate(0.6); }
